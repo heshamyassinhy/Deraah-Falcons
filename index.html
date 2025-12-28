@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>اختارلي العطر المناسب</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  direction:rtl;
+  background:#1f6b3a; /* الأخضر اللي طلبته */
+  color:#fff;
+}
+
+.banner img{
+  width:100%;
+}
+
+.container{
+  max-width:720px;
+  margin:auto;
+  background:#0f2f1d;
+  padding:25px;
+  border-radius:14px;
+  margin-top:15px;
+}
+
+h2{
+  text-align:center;
+  color:#b8ffcc;
+}
+
+.question{
+  margin-bottom:20px;
+}
+
+select{
+  width:100%;
+  padding:12px;
+  border-radius:6px;
+  border:none;
+  margin-top:6px;
+}
+
+.desc{
+  font-size:14px;
+  color:#b8ffcc;
+  margin-top:6px;
+}
+
+button{
+  width:100%;
+  padding:16px;
+  background:#b8ffcc;
+  color:#0f2f1d;
+  border:none;
+  border-radius:10px;
+  font-size:17px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.result{
+  margin-top:30px;
+}
+
+.perfume{
+  border:1px solid #b8ffcc;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
+  text-align:center;
+}
+
+.perfume img{
+  max-width:220px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- بانر -->
+<div class="banner">
+  <img src="6.png">
+</div>
+
+<div class="container">
+<h2>اختارلي العطر المناسب ليك</h2>
+
+<!-- 1 -->
+<div class="question">
+<p>تحب العطر يكون:</p>
+<select id="feel" onchange="showDesc()">
+  <option value="">اختار</option>
+  <option value="fresh">فريش وخفيف</option>
+  <option value="balanced">متوازن وواضح</option>
+  <option value="heavy">دافي وتقيل</option>
+</select>
+<div id="desc" class="desc"></div>
+</div>
+
+<!-- 2 -->
+<div class="question">
+<p>تحب العطر يكون باين قد إيه؟</p>
+<select id="projection">
+  <option value="">اختار</option>
+  <option value="low">هادي وقريب</option>
+  <option value="medium">متوسط</option>
+  <option value="high">باين وفوّاح</option>
+</select>
+</div>
+
+<!-- 3 -->
+<div class="question">
+<p>هتستخدم العطر إمتى؟</p>
+<select id="use">
+  <option value="">اختار</option>
+  <option value="daily">الصبح / الشغل</option>
+  <option value="evening">ليل / خروجات</option>
+</select>
+</div>
+
+<!-- 4 -->
+<div class="question">
+<p>شخصيتك أقرب لإيه؟</p>
+<select id="personality">
+  <option value="">اختار</option>
+  <option value="calm">هادي ورايق</option>
+  <option value="classic">كلاسيك ومرتب</option>
+  <option value="bold">جريء ومختلف</option>
+</select>
+</div>
+
+<!-- 5 -->
+<div class="question">
+<p>عندك حساسية من روائح معينة؟</p>
+<select id="allergy">
+  <option value="">لا</option>
+  <option value="sweet">فانيليا / سويت</option>
+  <option value="woody">أخشاب</option>
+  <option value="oriental">شرقي / توابل</option>
+  <option value="floral">وردي</option>
+</select>
+</div>
+
+<button onclick="calculate()">اعرف العطر المناسب ليك</button>
+
+<div id="result" class="result"></div>
+</div>
+
+<script>
+function showDesc(){
+  let f=document.getElementById("feel").value;
+  let d="";
+  if(f==="fresh") d="🍋 نضيف ومنعش، مناسب الاستخدام اليومي.";
+  if(f==="balanced") d="🌲 واضح ومتزن، لا تقيل ولا خفيف.";
+  if(f==="heavy") d="🍦🌶️ دافي وتقيل، ملفت ومناسب للمساء.";
+  document.getElementById("desc").innerHTML=d;
+}
+
+function calculate(){
+  let feel=document.getElementById("feel").value;
+  let projection=document.getElementById("projection").value;
+  let use=document.getElementById("use").value;
+  let personality=document.getElementById("personality").value;
+  let allergy=document.getElementById("allergy").value;
+
+  if(!feel||!projection||!use||!personality){
+    alert("كمّل كل الأسئلة");
+    return;
+  }
+
+  let perfumes=[
+    {name:"بوكس عزيز",img:"1.png",tags:["fresh","balanced","woody"],score:0},
+    {name:"بوكس فواز",img:"2.png",tags:["heavy","oriental","sweet","bold"],score:0},
+    {name:"بوكس عادل",img:"3.png",tags:["heavy","sweet","woody","classic"],score:0},
+    {name:"بوكس حماده",img:"4.png",tags:["heavy","sweet","floral","bold"],score:0},
+    {name:"بوكس صليح",img:"5.png",tags:["balanced","woody","fresh","calm"],score:0}
+  ];
+
+  perfumes.forEach(p=>{
+    if(allergy && p.tags.includes(allergy)){p.score=-999;return;}
+    if(p.tags.includes(feel)) p.score+=3;
+    if(projection==="high" && p.tags.includes("heavy")) p.score+=2;
+    if(projection==="low" && p.tags.includes("fresh")) p.score+=2;
+    if(use==="daily" && p.tags.includes("fresh")) p.score+=2;
+    if(use==="evening" && p.tags.includes("heavy")) p.score+=2;
+    if(p.tags.includes(personality)) p.score+=2;
+  });
+
+  perfumes.sort((a,b)=>b.score-a.score);
+
+  let out="<h3 style='color:#b8ffcc'>أنسب ترشيحات ليك:</h3>";
+  perfumes.slice(0,3).forEach(p=>{
+    if(p.score>0){
+      out+=`
+      <div class="perfume">
+        <img src="${p.img}">
+        <p>${p.name}</p>
+      </div>`;
+    }
+  });
+
+  document.getElementById("result").innerHTML=out;
+}
+</script>
+
+</body>
+</html>
